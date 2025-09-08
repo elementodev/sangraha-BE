@@ -1,15 +1,4 @@
 {
-  "dependencies": {
-    "@emailjs/nodejs": "^5.0.2",
-    "body-parser": "^2.2.0",
-    "cors": "^2.8.5",
-    "dotenv": "^17.2.2",
-    "express": "^5.1.0",
-    "debug": "^4.3.5",
-  }
-}
-
-{
   "name": "sangraha-be",
   "version": "1.0.0",
   "description": "Backend for Sangraha application",
@@ -18,5 +7,13 @@
     "start": "node server.js"
   },
   "author": "Elemento Dev",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "debug": "^4.3.5"
+  }
 }
