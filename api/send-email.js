@@ -1,13 +1,24 @@
 import emailjs from '@emailjs/nodejs';
 
 export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
 
-    // This is the honey pot check from your HTML
+    // Your honeypot check
+    // If the hidden 'website' field has a value, it's likely a bot.
     if (req.body.website) {
-        return res.status(400).json({ message: 'Spam detected.' });
+        console.warn('Spam detected via honeypot field.');
+        return res.status(200).json({ message: 'Success' });
     }
 
     const { fullName, email, phone, message } = req.body;
