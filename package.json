@@ -8,3 +8,15 @@
     "debug": "^4.3.5",
   }
 }
+
+{
+  "name": "sangraha-be",
+  "version": "1.0.0",
+  "description": "Backend for Sangraha application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Elemento Dev",
+  "license": "ISC"
+}
