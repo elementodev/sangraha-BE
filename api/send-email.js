@@ -25,12 +25,12 @@ export default async function handler(req, res) {
         };
 
         await emailjs.send(
-            process.env.Service_ID,
-            process.env.Template_ID,
+            process.env.SERVICE_ID,
+            process.env.TEMPLATE_ID,
             templateParams,
             {
-                publicKey: process.env.Public_Key,
-                privateKey: process.env.Private_Key,
+                publicKey: process.env.PUBLIC_KEY,
+                privateKey: process.env.PRIVATE_KEY,
             }
         );
 
