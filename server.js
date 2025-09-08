@@ -1,55 +1,54 @@
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const emailjs = require('@emailjs/nodejs');
+
+require('dotenv').config();
+
+const app = express();
+const port = 3000;
+
+app.use(cors());
+app.use(bodyParser.json());
 
 emailjs.init({
     publicKey: process.env.PUBLIC_KEY,
     privateKey: process.env.PRIVATE_KEY
 });
 
-module.exports = async (req, res) => {
-    if (req.method === 'OPTIONS') {
-        res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-        return res.status(200).send();
+app.post('/api/send-email', (req, res) => {
+    const { fullName, email, phone, message, website } = req.body;
+
+    if (website && website.trim() !== '') {
+        return res.status(400).json({ message: 'Spam detected.' });
     }
 
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-    if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method Not Allowed' });
+    if (!fullName || !email || !phone || !message) {
+        return res.status(400).json({ message: 'All form fields are required.' });
     }
 
-    try {
-        const { fullName, email, phone, message, website } = req.body;
+    const templateParams = {
+        from_name: fullName,
+        from_email: email,
+        phone: phone,
+        message: message,
+    };
 
-        if (website && website.trim() !== '') {
-            return res.status(400).json({ message: 'Spam detected.' });
-        }
-
-        if (!fullName || !email || !phone || !message) {
-            return res.status(400).json({ message: 'All form fields are required.' });
-        }
-
-        const templateParams = {
-            from_name: fullName,
-            from_email: email,
-            phone: phone,
-            message: message,
-        };
-
-        const response = await emailjs.send(
-            process.env.SERVICE_ID,
-            process.env.TEMPLATE_ID,
-            templateParams
-        );
-
+    emailjs.send(
+        process.env.SERVICE_ID,
+        process.env.TEMPLATE_ID,
+        templateParams
+    )
+    .then((response) => {
         console.log('Email successfully sent!', response.status, response.text);
         res.status(200).json({ message: 'Your message has been sent successfully!' });
-
-    } catch (error) {
+    })
+    .catch((error) => {
         console.error('Email sending failed...', error);
-        res.status(500).json({ message: 'Failed to send your message. Check server logs for details.' });
-    }
-};
+        res.status(500).json({ message: 'Failed to send your message. Check server console for details.' });
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
+});
